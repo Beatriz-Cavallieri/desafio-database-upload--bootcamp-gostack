@@ -13,6 +13,12 @@ transactionsRouter.get('/', async (request, response) => {
 
 transactionsRouter.post('/', async (request, response) => {
   // TODO
+  // desestruturar corpo da requisição
+  const { title, value, type, category } = request.body;
+  // Verificar se categoria já existe
+  // Se não existe, criar categoria e usar id
+  // Se existe, udar id existente
+  // Armazenar no banco de dados
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
