@@ -22,26 +22,28 @@ transactionsRouter.get('/', async (request, response) => {
 transactionsRouter.post('/', async (request, response) => {
   // TODO
   // desestruturar corpo da requisição
-  const { title, value, type } = request.body;
+  const { title, value, type, category_title } = request.body;
 
   // instanciar Service
   const createTransaction = new CreateTransactionService();
 
+  // executar service
   const transaction = await createTransaction.execute({
     title,
     value,
     type,
+    category_title,
   });
 
   return response.json(transaction);
 });
 
-transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
-});
+// transactionsRouter.delete('/:id', async (request, response) => {
+//   // TODO
+// });
 
-transactionsRouter.post('/import', async (request, response) => {
-  // TODO
-});
+// transactionsRouter.post('/import', async (request, response) => {
+//   // TODO
+// });
 
 export default transactionsRouter;
