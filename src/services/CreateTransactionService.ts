@@ -1,6 +1,6 @@
-// import AppError from '../errors/AppError';
-
 import { getCustomRepository, getRepository } from 'typeorm';
+import AppError from '../errors/AppError';
+
 import Category from '../models/Category';
 import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
@@ -21,11 +21,17 @@ class CreateTransactionService {
   }: CreateTransactionDTO): Promise<Transaction> {
     // Repositório de transações
     const transactionsRepository = getCustomRepository(TransactionsRepository);
+    // Repositório de categorias
+    const categoriesRepository = getRepository(Category);
 
     let category_id;
 
-    // Repositório de categorias
-    const categoriesRepository = getRepository(Category);
+    if (type === 'outcome') {
+      const { total } = await transactionsRepository.getBalance();
+      if (total < value) {
+        throw new AppError('Not enough balance.');
+      }
+    }
 
     // Verifica se já existe cadastro da categoria
     const categoryExists = await categoriesRepository.findOne({
@@ -37,8 +43,8 @@ class CreateTransactionService {
     if (!categoryExists) {
       // Cria categoria e usa seu id
       const category = categoriesRepository.create({ title: category_title });
-      const savedCategory = await categoriesRepository.save(category);
-      category_id = savedCategory.id;
+      await categoriesRepository.save(category);
+      category_id = category.id;
     } else {
       // Usa id da categoria existente
       category_id = categoryExists.id;
